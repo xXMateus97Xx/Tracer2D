@@ -1,13 +1,57 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Tracer2D
 {
     public struct Scene
     {
+        static readonly byte[] _formatHeader = new byte[]{ (byte)'P', (byte)'6', (byte)'\n' };
+        static readonly byte[] _colorHeader = new byte[]{ (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
+
         public Color Background;
         public Shape[] Shapes;
         public int Width, Height;
+
+        public static Scene FromJson(string json)
+        {
+            var parsedJson = JsonDocument.Parse(json);
+            return FromJson(parsedJson);
+        }
+
+        public static Scene FromJson(byte[] json)
+        {
+            var parsedJson = JsonDocument.Parse(json);
+            return FromJson(parsedJson);
+        }
+
+        public static async ValueTask<Scene> FromJsonAsync(Stream json)
+        {
+            var parsedJson = await JsonDocument.ParseAsync(json);
+            return FromJson(parsedJson);
+        }
+
+        public static Scene FromJson(JsonDocument json)
+        {
+            var root = json.RootElement;
+
+            if (root.ValueKind != JsonValueKind.Object)
+                throw new InvalidOperationException("Root json was not an object");
+
+            var scene = new Scene();
+
+            var background = root.GetObject("background");
+            scene.Background = Color.FromJson(background);
+
+            scene.Width = root.GetInt("width");
+            scene.Height = root.GetInt("height");
+
+            var shapes = root.GetArray("shapes");
+            scene.Shapes = Shape.ArrayFromJson(shapes);
+
+            return scene;
+        }
 
         public void Render(Stream stream)
         {
@@ -53,9 +97,7 @@ namespace Tracer2D
                 result = result.Trim((byte)0);
             }
 
-            file.WriteByte((byte)'P');
-            file.WriteByte((byte)'6');
-            file.WriteByte((byte)'\n');
+            file.Write(_formatHeader);
 
             Span<byte> numberBuffer = stackalloc byte[31];
             Span<byte> copy = numberBuffer;
@@ -69,11 +111,7 @@ namespace Tracer2D
             Itoa(Height, ref copy);
             file.Write(copy);
 
-            file.WriteByte((byte)'\n');
-            file.WriteByte((byte)'2');
-            file.WriteByte((byte)'5');
-            file.WriteByte((byte)'5');
-            file.WriteByte((byte)'\n');
+            file.Write(_colorHeader);
         }
     }
 }

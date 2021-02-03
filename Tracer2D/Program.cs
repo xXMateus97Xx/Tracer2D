@@ -1,81 +1,40 @@
-﻿namespace Tracer2D
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Tracer2D.Shapes;
+
+namespace Tracer2D
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            JapanFlag();
-            ItalyFlag();
-            FranceFlag();
-            BrazilFlag();
-            Chessboard();
-        }
-
-        static void JapanFlag()
-        {
-            var scene = new Scene
+            if (args.Length < 2)
             {
-                Background = new Color(255, 255, 255),
-                Height = 768,
-                Width = 1366,
-                Shapes = new Shape[]
-                {
-                    new Circle(300, new Color(255, 0, 0), new Point(683, 384))
-                }
-            };
+                Console.Error.WriteLine("Invalid arguments");
+                Environment.Exit(-1);
+            }
 
-            scene.Render("japan.ppm");
-        }
+            var input = args[0];
+            var output = args[1];
 
-        static void ItalyFlag()
-        {
-            var scene = new Scene
+            if (!File.Exists(input))
             {
-                Background = new Color(255, 255, 255),
-                Height = 768,
-                Width = 1366,
-                Shapes = new Shape[]
-                {
-                    new Square(455, 768, new Color(255, 0, 0), new Point(1138, 384)),
-                    new Square(455, 768, new Color(0, 255, 0), new Point(227, 384)),
-                }
-            };
+                Console.Error.WriteLine("input doest not exists");
+                Environment.Exit(-1);
+            }
 
-            scene.Render("italy.ppm");
-        }
-
-        static void FranceFlag()
-        {
-            var scene = new Scene
+            try
             {
-                Background = new Color(255, 255, 255),
-                Height = 768,
-                Width = 1366,
-                Shapes = new Shape[]
-                {
-                    new Square(455, 768, new Color(255, 0, 0), new Point(1138, 384)),
-                    new Square(455, 768, new Color(0, 0, 255), new Point(227, 384)),
-                }
-            };
-
-            scene.Render("france.ppm");
-        }
-
-        static void BrazilFlag()
-        {
-            var scene = new Scene
+                using var inputFile = File.OpenRead(input);
+                var scene = await Scene.FromJsonAsync(inputFile);
+                scene.Render(output);
+            }
+            catch (Exception ex)
             {
-                Background = new Color(0, 255, 0),
-                Height = 768,
-                Width = 1366,
-                Shapes = new Shape[]
-                {
-                    new Diamond(1100, 700, new Color(255, 255, 0), new Point(683, 384)),
-                    new Circle(200, new Color(0, 0, 255), new Point(683, 384)),
-                }
-            };
-
-            scene.Render("brazil.ppm");
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit(-1);
+            }
         }
 
         static void Chessboard()
