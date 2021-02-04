@@ -59,12 +59,10 @@ namespace Tracer2D
 
             var p = new Point();
 
-            for (int y = 0; y < Height; y++)
+            for (; p.y < Height; p.y++)
             {
-                p.y = y;
-                for (int x = 0; x < Width; x++)
+                for (p.x = 0; p.x < Width; p.x++)
                 {
-                    p.x = x;
                     ref Color c = ref Background;
                     for (int i = Shapes.Length - 1; i >= 0; i--)
                     {

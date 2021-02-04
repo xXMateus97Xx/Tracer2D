@@ -15,7 +15,12 @@ namespace Tracer2D
         ReversePentagon,
         Ellipse,
         Trapeze,
-        ReverseTrapeze
+        ReverseTrapeze,
+        Ring,
+        TopSemiCircle,
+        RightSemiCircle,
+        BottomSemiCircle,
+        LefSemiCircle
     }
 
     public abstract class Shape
@@ -63,6 +68,16 @@ namespace Tracer2D
                     return Trapeze.FromJson(item);
                 case ShapeKind.ReverseTrapeze:
                     return ReverseTrapeze.FromJson(item);
+                case ShapeKind.Ring:
+                    return Ring.FromJson(item);
+                case ShapeKind.TopSemiCircle:
+                    return TopSemiCircle.FromJson(item);
+                case ShapeKind.RightSemiCircle:
+                    return RightSemiCircle.FromJson(item);
+                case ShapeKind.BottomSemiCircle:
+                    return BottomSemiCircle.FromJson(item);
+                case ShapeKind.LefSemiCircle:
+                    return LeftSemiCircle.FromJson(item);
                 default:
                     throw new InvalidOperationException($"Unknown shape kind {kind}");
             }
