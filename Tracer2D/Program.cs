@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Tracer2D.Shapes;
 
 namespace Tracer2D
 {
@@ -20,7 +19,7 @@ namespace Tracer2D
 
             if (!File.Exists(input))
             {
-                Console.Error.WriteLine("input doest not exists");
+                Console.Error.WriteLine("input does not exists");
                 Environment.Exit(-1);
             }
 
