@@ -58,18 +58,21 @@ namespace Tracer2D
             WriteHeader(stream);
 
             var p = new Point();
-
+            Color finalColor;
             for (; p.y < Height; p.y++)
             {
                 for (p.x = 0; p.x < Width; p.x++)
                 {
                     ref Color c = ref Background;
+                     
                     for (int i = Shapes.Length - 1; i >= 0; i--)
                     {
                         var shape = Shapes[i];
                         if (shape.Intersect(p))
                         {
-                            c = ref shape.Color;
+                            ref var shapeColor = ref shape.Color;
+                            finalColor = c + shapeColor;
+                            c = ref finalColor;
                             break;
                         }
                     }
