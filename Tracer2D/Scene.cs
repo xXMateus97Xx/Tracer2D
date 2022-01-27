@@ -1,14 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace Tracer2D
 {
     public struct Scene
     {
-        static readonly byte[] _formatHeader = new byte[]{ (byte)'P', (byte)'6', (byte)'\n' };
-        static readonly byte[] _colorHeader = new byte[]{ (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
+        static readonly byte[] _formatHeader = new byte[] { (byte)'P', (byte)'6', (byte)'\n' };
+        static readonly byte[] _colorHeader = new byte[] { (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
 
         public Color Background;
         public Shape[] Shapes;
@@ -64,7 +61,7 @@ namespace Tracer2D
                 for (p.x = 0; p.x < Width; p.x++)
                 {
                     ref Color c = ref Background;
-                     
+
                     for (int i = Shapes.Length - 1; i >= 0; i--)
                     {
                         var shape = Shapes[i];

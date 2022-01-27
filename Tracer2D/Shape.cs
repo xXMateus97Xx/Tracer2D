@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Tracer2D.Shapes;
 
 namespace Tracer2D

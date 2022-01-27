@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 
 namespace Tracer2D.Shapes
@@ -22,7 +21,7 @@ namespace Tracer2D.Shapes
 
             var topLeft = new Point(leftX, topY);
             var bottomLeft = new Point(leftX, bottomY);
-            var deepestLeft = new Point(leftX -  topBottomDiff, topLeft.y);
+            var deepestLeft = new Point(leftX - topBottomDiff, topLeft.y);
 
             var topRight = new Point(rightX, topY);
             var bottomRight = new Point(rightX, bottomY);
@@ -36,7 +35,7 @@ namespace Tracer2D.Shapes
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
-            
+
             var height = el.GetInt("height");
             var topWidth = el.GetInt("topwidth");
             var bottomWidth = el.GetInt("bottomwidth");

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Tracer2D
@@ -47,7 +46,7 @@ namespace Tracer2D
 
         public unsafe ReadOnlySpan<byte> ToSpan() => new ReadOnlySpan<byte>(Unsafe.AsPointer(ref r), 3);
 
-        public static Color operator+(in Color a, in Color b)
+        public static Color operator +(in Color a, in Color b)
         {
             var alpha = b.a;
 

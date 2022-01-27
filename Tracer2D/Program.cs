@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace Tracer2D
+﻿namespace Tracer2D
 {
     class Program
     {

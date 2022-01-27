@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 
 namespace Tracer2D.Shapes
@@ -14,7 +13,7 @@ namespace Tracer2D.Shapes
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
-            
+
             var radius = el.GetInt("radius");
             var centerEl = el.GetObject("center");
             var center = Point.FromJson(centerEl);

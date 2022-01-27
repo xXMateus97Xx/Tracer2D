@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 
 namespace Tracer2D
@@ -27,7 +26,7 @@ namespace Tracer2D
             return el.GetProperty(name, JsonValueKind.Number, (JsonElement element, out int i) => element.TryGetInt32(out i));
         }
 
-        public static T GetEnum<T>(this JsonElement el, string name) where T: struct, Enum
+        public static T GetEnum<T>(this JsonElement el, string name) where T : struct, Enum
         {
             var typeofT = typeof(T);
 
