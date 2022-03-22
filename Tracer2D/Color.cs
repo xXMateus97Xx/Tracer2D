@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace Tracer2D
@@ -44,7 +44,8 @@ namespace Tracer2D
             return color;
         }
 
-        public unsafe ReadOnlySpan<byte> ToSpan() => new ReadOnlySpan<byte>(Unsafe.AsPointer(ref r), 3);
+        public ReadOnlySpan<byte> ToSpan() => MemoryMarshal.CreateSpan(ref r, 3);
+        public void ToSpan(Span<byte> buffer) => MemoryMarshal.CreateSpan(ref r, 3).CopyTo(buffer);
 
         public static Color operator +(in Color a, in Color b)
         {

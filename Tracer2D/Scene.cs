@@ -1,11 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace Tracer2D
 {
     public struct Scene
     {
-        static readonly byte[] _formatHeader = new byte[] { (byte)'P', (byte)'6', (byte)'\n' };
-        static readonly byte[] _colorHeader = new byte[] { (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
+        static ReadOnlySpan<byte> FormatHeader => new byte[] { (byte)'P', (byte)'6', (byte)'\n' };
+        static ReadOnlySpan<byte> ColorHeader => new byte[] { (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
 
         public Color Background;
         public Shape[] Shapes;
@@ -56,6 +58,9 @@ namespace Tracer2D
 
             var p = new Point();
             Color finalColor;
+            Span<byte> buffer = stackalloc byte[1023];
+            var bufPos = 0;
+
             for (; p.y < Height; p.y++)
             {
                 for (p.x = 0; p.x < Width; p.x++)
@@ -74,9 +79,18 @@ namespace Tracer2D
                         }
                     }
 
-                    stream.Write(c.ToSpan());
+                    c.ToSpan(buffer.Slice(bufPos));
+                    bufPos += 3;
+                    if (bufPos == buffer.Length)
+                    {
+                        stream.Write(buffer);
+                        bufPos = 0;
+                    }
                 }
             }
+
+            if (bufPos > 0)
+                stream.Write(buffer.Slice(0, bufPos));
         }
 
         public void Render(string outputPath)
@@ -87,29 +101,38 @@ namespace Tracer2D
 
         private void WriteHeader(Stream file)
         {
-            static void Itoa(int val, ref Span<byte> result)
+            static int Itoa(int val, Span<byte> result)
             {
-                for (int i = 30; val > 0 && i > 0; i--, val /= 10)
-                    result[i] = (byte)"0123456789"[val % 10];
+                ref char numbers = ref MemoryMarshal.GetReference("0123456789".AsSpan());
 
-                result = result.Trim((byte)0);
+                Span<byte> tempResult = stackalloc byte[31];
+                ref byte dstBuf = ref MemoryMarshal.GetReference(tempResult);
+
+                int i, j;
+                for (i = 30, j = 0; val > 0 && i > 0; i--, val /= 10, j++)
+                {
+                    var number = Unsafe.Add(ref numbers, val % 10);
+                    Unsafe.Add(ref dstBuf, i) = (byte)number;
+                }
+
+                tempResult.TrimStart((byte)0).CopyTo(result);
+
+                return j;
             }
 
-            file.Write(_formatHeader);
+            var headerLength = FormatHeader.Length + ColorHeader.Length + 21;
+            var headerPos = 0;
+            Span<byte> header = stackalloc byte[headerLength];
 
-            Span<byte> numberBuffer = stackalloc byte[31];
-            Span<byte> copy = numberBuffer;
-            Itoa(Width, ref copy);
-            file.Write(copy);
+            FormatHeader.CopyTo(header);
+            headerPos += FormatHeader.Length;
+            headerPos += Itoa(Width, header.Slice(headerPos));
+            header[headerPos++] = (byte)' ';
+            headerPos += Itoa(Height, header.Slice(headerPos));
+            ColorHeader.CopyTo(header.Slice(headerPos));
+            headerPos += ColorHeader.Length;
 
-            numberBuffer.Fill(0);
-            file.WriteByte((byte)' ');
-
-            copy = numberBuffer;
-            Itoa(Height, ref copy);
-            file.Write(copy);
-
-            file.Write(_colorHeader);
+            file.Write(header.Slice(0, headerPos));
         }
     }
 }
