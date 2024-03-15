@@ -6,9 +6,6 @@ namespace Tracer2D
 {
     public struct Scene
     {
-        static ReadOnlySpan<byte> FormatHeader => new byte[] { (byte)'P', (byte)'6', (byte)'\n' };
-        static ReadOnlySpan<byte> ColorHeader => new byte[] { (byte)'\n', (byte)'2', (byte)'5', (byte)'5', (byte)'\n' };
-
         public Color Background;
         public Shape[] Shapes;
         public int Width, Height;
@@ -58,6 +55,7 @@ namespace Tracer2D
 
             var p = new Point();
             Color finalColor;
+            //1023 é multiplo de 3, e RGB tem 3 bytes
             Span<byte> buffer = stackalloc byte[1023];
             var bufPos = 0;
 
@@ -120,17 +118,20 @@ namespace Tracer2D
                 return j;
             }
 
-            var headerLength = FormatHeader.Length + ColorHeader.Length + 21;
+            var formatHeader = "P6\n"u8;
+            var colorHeader = "\n255\n"u8;
+
+            var headerLength = formatHeader.Length + colorHeader.Length + 21;
             var headerPos = 0;
             Span<byte> header = stackalloc byte[headerLength];
 
-            FormatHeader.CopyTo(header);
-            headerPos += FormatHeader.Length;
+            formatHeader.CopyTo(header);
+            headerPos += formatHeader.Length;
             headerPos += Itoa(Width, header.Slice(headerPos));
             header[headerPos++] = (byte)' ';
             headerPos += Itoa(Height, header.Slice(headerPos));
-            ColorHeader.CopyTo(header.Slice(headerPos));
-            headerPos += ColorHeader.Length;
+            colorHeader.CopyTo(header.Slice(headerPos));
+            headerPos += colorHeader.Length;
 
             file.Write(header.Slice(0, headerPos));
         }
