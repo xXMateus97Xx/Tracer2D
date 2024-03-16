@@ -19,7 +19,7 @@ namespace Tracer2D
         TopSemiCircle,
         RightSemiCircle,
         BottomSemiCircle,
-        LefSemiCircle
+        LeftSemiCircle
     }
 
     public abstract class Shape
@@ -75,7 +75,7 @@ namespace Tracer2D
                     return RightSemiCircle.FromJson(item);
                 case ShapeKind.BottomSemiCircle:
                     return BottomSemiCircle.FromJson(item);
-                case ShapeKind.LefSemiCircle:
+                case ShapeKind.LeftSemiCircle:
                     return LeftSemiCircle.FromJson(item);
                 default:
                     throw new InvalidOperationException($"Unknown shape kind {kind}");

@@ -2,7 +2,7 @@
   "profiles": {
     "Tracer2D": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\..\\examples\\brazil-flag.json teste.ppm"
+      "commandLineArgs": "..\\..\\..\\examples\\shapes.json teste.ppm"
     }
   }
 }
