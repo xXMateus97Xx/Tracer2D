@@ -4,7 +4,6 @@ namespace Tracer2D.Shapes
 {
     public class ReversePentagon : Shape
     {
-        public readonly int Side;
         readonly Triangle _a, _b, _c;
 
         public ReversePentagon(int side, in Color color, in Point center)

@@ -4,7 +4,6 @@ namespace Tracer2D.Shapes
 {
     public class Pentagon : Shape
     {
-        public readonly int Side;
         readonly Triangle _a, _b, _c;
 
         public Pentagon(int side, in Color color, in Point center)
