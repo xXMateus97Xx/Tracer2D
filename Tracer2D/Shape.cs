@@ -24,7 +24,12 @@ namespace Tracer2D
 
     public abstract class Shape
     {
-        public Color Color;
+        public readonly Color Color;
+
+        protected Shape(in Color color)
+        {
+            Color = color;
+        }
 
         public abstract bool Intersect(in Point p);
 

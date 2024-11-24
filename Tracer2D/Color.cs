@@ -1,12 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Tracer2D
 {
-    public struct Color
+    public readonly struct Color
     {
-        public byte r, g, b;
-        public float a;
+        public readonly byte r, g, b;
+        public readonly float a;
 
         public Color(byte r, byte g, byte b)
         {
@@ -33,19 +32,21 @@ namespace Tracer2D
             if (el.TryGetProperty("a", out _))
                 a = el.GetFloat("a");
 
-            var color = new Color
-            {
-                r = el.GetByte("r"),
-                g = el.GetByte("g"),
-                b = el.GetByte("b"),
-                a = a
-            };
+            var r = el.GetByte("r");
+            var g = el.GetByte("g");
+            var b = el.GetByte("b");
+
+            var color = new Color(r, g, b, a);
 
             return color;
         }
 
-        public ReadOnlySpan<byte> ToSpan() => MemoryMarshal.CreateSpan(ref r, 3);
-        public void ToSpan(Span<byte> buffer) => MemoryMarshal.CreateSpan(ref r, 3).CopyTo(buffer);
+        public void ToSpan(Span<byte> buffer)
+        {
+            buffer[2] = b;
+            buffer[1] = g;
+            buffer[0] = r;
+        }
 
         public static Color operator +(in Color a, in Color b)
         {

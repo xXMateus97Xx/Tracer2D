@@ -8,9 +8,8 @@ namespace Tracer2D.Shapes
         readonly Square _s;
 
         public Hexagon(int side, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
-
             var halfSide = side / 2;
             var apothem = MathF.Sqrt((side * side) - (halfSide * halfSide));
 

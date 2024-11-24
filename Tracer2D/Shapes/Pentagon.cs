@@ -7,9 +7,8 @@ namespace Tracer2D.Shapes
         readonly Triangle _a, _b, _c;
 
         public Pentagon(int side, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
-
             var height = side * 3.0776834f / 2;
             var halfHeight = height / 2;
             var diagonal = side * 3.236068f / 2;

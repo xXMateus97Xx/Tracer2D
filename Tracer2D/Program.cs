@@ -21,9 +21,9 @@
 
             try
             {
-                using var inputFile = File.OpenRead(input);
+                await using var inputFile = File.OpenRead(input);
                 var scene = await Scene.FromJsonAsync(inputFile);
-                scene.Render(output);
+                await scene.RenderAsync(output);
             }
             catch (Exception ex)
             {

@@ -8,8 +8,8 @@ namespace Tracer2D.Shapes
         public readonly Point Center;
 
         public Ring(int radius, int thickness, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
             Radius = radius;
             Thickness = thickness;
             Center = center;

@@ -8,9 +8,9 @@ namespace Tracer2D.Shapes
         public readonly Point Center;
 
         public Circle(int radius, in Color color, in Point center)
+            : base(color)
         {
             Radius = radius;
-            Color = color;
             Center = center;
         }
 

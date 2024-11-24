@@ -7,6 +7,7 @@ namespace Tracer2D.Shapes
         readonly int _topY, _bottomY, _leftX, _rightX;
 
         public Square(int width, int height, in Color color, in Point center)
+            : base(color)
         {
             var halfHeight = height / 2;
             var halfWidth = width / 2;
@@ -14,8 +15,6 @@ namespace Tracer2D.Shapes
             _bottomY = center.y + halfHeight;
             _leftX = center.x - halfWidth;
             _rightX = center.x + halfWidth;
-
-            Color = color;
         }
 
         public static new Square FromJson(JsonElement el)

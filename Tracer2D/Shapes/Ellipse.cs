@@ -7,8 +7,8 @@ namespace Tracer2D.Shapes
         public readonly Point Center, Radius;
 
         public Ellipse(in Point radius, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
             Radius = radius;
             Center = center;
         }

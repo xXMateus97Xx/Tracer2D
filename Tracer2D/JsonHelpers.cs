@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Tracer2D
@@ -8,7 +9,7 @@ namespace Tracer2D
 
         public static string GetString(this JsonElement el, string name)
         {
-            return el.GetProperty(name, JsonValueKind.Number, (JsonElement element, out string i) => { i = element.GetString(); return true; });
+            return el.GetProperty(name, JsonValueKind.String, (JsonElement element, out string i) => { i = element.GetString(); return true; });
         }
 
         public static byte GetByte(this JsonElement el, string name)
@@ -26,14 +27,14 @@ namespace Tracer2D
             return el.GetProperty(name, JsonValueKind.Number, (JsonElement element, out int i) => element.TryGetInt32(out i));
         }
 
-        public static T GetEnum<T>(this JsonElement el, string name) where T : struct, Enum
+        public static T GetEnum<T>(this JsonElement el, string name) where T : unmanaged, Enum
         {
             var typeofT = typeof(T);
 
             if (el.TryGetProperty(name, out var prop))
                 if (prop.ValueKind == JsonValueKind.Number)
                     if (prop.TryGetInt32(out int value))
-                        return (T)Enum.ToObject(typeofT, value);
+                        return Unsafe.As<int, T>(ref value);
                     else if (Enum.TryParse<T>(prop.GetString(), out var e))
                         return e;
 

@@ -8,8 +8,8 @@ namespace Tracer2D.Shapes
         readonly Triangle _left, _right;
 
         public Trapeze(int height, int topWidth, int bottomWidth, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
             _square = new Square(topWidth, height, color, center);
 
             var halfHeight = height / 2;

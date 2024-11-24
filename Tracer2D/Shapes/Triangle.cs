@@ -8,11 +8,11 @@ namespace Tracer2D.Shapes
         readonly float _area;
 
         public Triangle(in Point v0, in Point v1, in Point v2, in Color color)
+            : base(color)
         {
             this.v0 = v0;
             this.v1 = v1;
             this.v2 = v2;
-            Color = color;
             _area = Area(v0, v1, v2);
         }
 

@@ -7,8 +7,8 @@ namespace Tracer2D.Shapes
         readonly Triangle _a, _b;
 
         public Diamond(int width, int height, in Color color, in Point center)
+            : base(color)
         {
-            Color = color;
             var halfWidth = width / 2;
             var halfHeight = height / 2;
             var left = new Point(center.x - halfWidth, center.y);

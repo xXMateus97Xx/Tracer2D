@@ -4,11 +4,19 @@ using System.Text.Json;
 
 namespace Tracer2D
 {
-    public struct Scene
+    public readonly struct Scene
     {
-        public Color Background;
-        public Shape[] Shapes;
-        public int Width, Height;
+        public readonly Color Background;
+        public readonly Shape[] Shapes;
+        public readonly int Width, Height;
+
+        public Scene(Color background, Shape[] shapes, int width, int height)
+        {
+            Background = background;
+            Shapes = shapes;
+            Width = width;
+            Height = height;
+        }
 
         public static Scene FromJson(string json)
         {
@@ -22,7 +30,7 @@ namespace Tracer2D
             return FromJson(parsedJson);
         }
 
-        public static async ValueTask<Scene> FromJsonAsync(Stream json)
+        public static async Task<Scene> FromJsonAsync(Stream json)
         {
             var parsedJson = await JsonDocument.ParseAsync(json);
             return FromJson(parsedJson);
@@ -35,18 +43,16 @@ namespace Tracer2D
             if (root.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("Root json was not an object");
 
-            var scene = new Scene();
+            var backgroundObj = root.GetObject("background");
+            var background = Color.FromJson(backgroundObj);
 
-            var background = root.GetObject("background");
-            scene.Background = Color.FromJson(background);
+            var width = root.GetInt("width");
+            var height = root.GetInt("height");
 
-            scene.Width = root.GetInt("width");
-            scene.Height = root.GetInt("height");
+            var shapesObj = root.GetArray("shapes");
+            var shapes = Shape.ArrayFromJson(shapesObj);
 
-            var shapes = root.GetArray("shapes");
-            scene.Shapes = Shape.ArrayFromJson(shapes);
-
-            return scene;
+            return new Scene(background, shapes, width, height);
         }
 
         public void Render(Stream stream)
@@ -63,21 +69,21 @@ namespace Tracer2D
             {
                 for (p.x = 0; p.x < Width; p.x++)
                 {
-                    ref Color c = ref Background;
+                    ref readonly var c = ref Background;
 
-                    for (int i = Shapes.Length - 1; i >= 0; i--)
+                    for (var i = Shapes.Length - 1; i >= 0; i--)
                     {
                         var shape = Shapes[i];
                         if (shape.Intersect(p))
                         {
-                            ref var shapeColor = ref shape.Color;
+                            ref readonly var shapeColor = ref shape.Color;
                             finalColor = c + shapeColor;
                             c = ref finalColor;
                             break;
                         }
                     }
 
-                    c.ToSpan(buffer.Slice(bufPos));
+                    c.ToSpan(buffer[bufPos..]);
                     bufPos += 3;
                     if (bufPos == buffer.Length)
                     {
@@ -88,12 +94,12 @@ namespace Tracer2D
             }
 
             if (bufPos > 0)
-                stream.Write(buffer.Slice(0, bufPos));
+                stream.Write(buffer[..bufPos]);
         }
 
         public async Task RenderAsync(string outputPath)
         {
-            using var file = File.OpenWrite(outputPath);
+            await using var file = File.OpenWrite(outputPath);
             Render(file);
         }
 
@@ -101,10 +107,10 @@ namespace Tracer2D
         {
             static int Itoa(int val, Span<byte> result)
             {
-                ref char numbers = ref MemoryMarshal.GetReference("0123456789".AsSpan());
+                ref var numbers = ref MemoryMarshal.GetReference("0123456789".AsSpan());
 
                 Span<byte> tempResult = stackalloc byte[31];
-                ref byte dstBuf = ref MemoryMarshal.GetReference(tempResult);
+                ref var dstBuf = ref MemoryMarshal.GetReference(tempResult);
 
                 int i, j;
                 for (i = 30, j = 0; val > 0 && i > 0; i--, val /= 10, j++)
@@ -127,13 +133,13 @@ namespace Tracer2D
 
             formatHeader.CopyTo(header);
             headerPos += formatHeader.Length;
-            headerPos += Itoa(Width, header.Slice(headerPos));
+            headerPos += Itoa(Width, header[headerPos..]);
             header[headerPos++] = (byte)' ';
-            headerPos += Itoa(Height, header.Slice(headerPos));
-            colorHeader.CopyTo(header.Slice(headerPos));
+            headerPos += Itoa(Height, header[headerPos..]);
+            colorHeader.CopyTo(header[headerPos..]);
             headerPos += colorHeader.Length;
 
-            file.Write(header.Slice(0, headerPos));
+            file.Write(header[..headerPos]);
         }
     }
 }
