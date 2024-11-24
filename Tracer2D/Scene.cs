@@ -91,7 +91,7 @@ namespace Tracer2D
                 stream.Write(buffer.Slice(0, bufPos));
         }
 
-        public void Render(string outputPath)
+        public async Task RenderAsync(string outputPath)
         {
             using var file = File.OpenWrite(outputPath);
             Render(file);
