@@ -18,7 +18,7 @@ namespace Tracer2D.Shapes
             var top = new Point(center.x, (int)(center.y - halfHeight));
             var baseLeft = new Point(center.x - halfSide, (int)(center.y + halfHeight));
             var baseRight = new Point(center.x + halfSide, (int)(center.y + halfHeight));
-            var sideCornerY = (int)(top.y + MathF.Sqrt((side * side) - (halfDiagonal * halfDiagonal)));
+            var sideCornerY = (int)(top.y + MathF.Sqrt(side * side - halfDiagonal * halfDiagonal));
 
             _a = new Triangle(top, baseLeft, baseRight, color);
 
@@ -31,7 +31,7 @@ namespace Tracer2D.Shapes
                 color);
         }
 
-        public static new Pentagon FromJson(JsonElement el)
+        public new static Pentagon FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");

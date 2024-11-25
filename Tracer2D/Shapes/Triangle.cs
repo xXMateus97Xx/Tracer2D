@@ -4,19 +4,19 @@ namespace Tracer2D.Shapes
 {
     public class Triangle : Shape
     {
-        public readonly Point v0, v1, v2;
+        readonly Point _v0, _v1, _v2;
         readonly float _area;
 
         public Triangle(in Point v0, in Point v1, in Point v2, in Color color)
             : base(color)
         {
-            this.v0 = v0;
-            this.v1 = v1;
-            this.v2 = v2;
+            _v0 = v0;
+            _v1 = v1;
+            _v2 = v2;
             _area = Area(v0, v1, v2);
         }
 
-        public static new Triangle FromJson(JsonElement el)
+        public new static Triangle FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
@@ -35,9 +35,9 @@ namespace Tracer2D.Shapes
 
         public override bool Intersect(in Point p)
         {
-            var a1 = Area(p, v1, v2);
-            var a2 = Area(v0, p, v2);
-            var a3 = Area(v0, v1, p);
+            var a1 = Area(p, _v1, _v2);
+            var a2 = Area(_v0, p, _v2);
+            var a3 = Area(_v0, _v1, p);
 
             return _area == a1 + a2 + a3;
         }

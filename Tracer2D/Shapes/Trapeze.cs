@@ -31,7 +31,7 @@ namespace Tracer2D.Shapes
             _right = new Triangle(topRight, bottomRight, deepestRight, color);
         }
 
-        public static new Trapeze FromJson(JsonElement el)
+        public new static Trapeze FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");

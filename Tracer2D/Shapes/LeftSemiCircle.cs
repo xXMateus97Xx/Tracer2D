@@ -9,7 +9,7 @@ namespace Tracer2D.Shapes
         {
         }
 
-        public static new LeftSemiCircle FromJson(JsonElement el)
+        public new static LeftSemiCircle FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
@@ -25,10 +25,7 @@ namespace Tracer2D.Shapes
 
         public override bool Intersect(in Point p)
         {
-            if (p.x > Center.x)
-                return false;
-
-            return base.Intersect(p);
+            return p.x <= Center.x && base.Intersect(p);
         }
     }
 }

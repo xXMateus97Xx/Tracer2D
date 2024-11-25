@@ -20,7 +20,7 @@ namespace Tracer2D.Shapes
             _b = new Triangle(left, right, bottom, color);
         }
 
-        public static new Diamond FromJson(JsonElement el)
+        public new static Diamond FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");

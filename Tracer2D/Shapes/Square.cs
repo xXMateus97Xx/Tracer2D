@@ -17,7 +17,7 @@ namespace Tracer2D.Shapes
             _rightX = center.x + halfWidth;
         }
 
-        public static new Square FromJson(JsonElement el)
+        public new static Square FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");

@@ -4,18 +4,18 @@ namespace Tracer2D.Shapes
 {
     public class Ring : Shape
     {
-        public readonly int Radius, Thickness;
-        public readonly Point Center;
+        readonly int _radius, _thickness;
+        readonly Point _center;
 
         public Ring(int radius, int thickness, in Color color, in Point center)
             : base(color)
         {
-            Radius = radius;
-            Thickness = thickness;
-            Center = center;
+            _radius = radius;
+            _thickness = thickness;
+            _center = center;
         }
 
-        public static new Ring FromJson(JsonElement el)
+        public new static Ring FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
@@ -32,8 +32,8 @@ namespace Tracer2D.Shapes
 
         public override bool Intersect(in Point p)
         {
-            var distance = MathF.Sqrt(((p.x - Center.x) * (p.x - Center.x)) + ((p.y - Center.y) * (p.y - Center.y)));
-            return distance <= Radius && distance > Thickness;
+            var distance = MathF.Sqrt((p.x - _center.x) * (p.x - _center.x) + (p.y - _center.y) * (p.y - _center.y));
+            return distance <= _radius && distance > _thickness;
         }
     }
 }

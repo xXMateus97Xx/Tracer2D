@@ -11,7 +11,7 @@ namespace Tracer2D.Shapes
             : base(color)
         {
             var halfSide = side / 2;
-            var apothem = MathF.Sqrt((side * side) - (halfSide * halfSide));
+            var apothem = MathF.Sqrt(side * side - halfSide * halfSide);
 
             var topLeft = new Point(center.x - halfSide, (int)(center.y - apothem));
             var topRight = new Point(center.x + halfSide, (int)(center.y - apothem));
@@ -25,7 +25,7 @@ namespace Tracer2D.Shapes
             _b = new Triangle(bottomRight, topRight, right, color);
         }
 
-        public static new Hexagon FromJson(JsonElement el)
+        public new static Hexagon FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");

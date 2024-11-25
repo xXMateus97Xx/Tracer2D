@@ -4,17 +4,17 @@ namespace Tracer2D.Shapes
 {
     public class Circle : Shape
     {
-        public readonly int Radius;
-        public readonly Point Center;
+        readonly int _radius;
+        protected readonly Point Center;
 
         public Circle(int radius, in Color color, in Point center)
             : base(color)
         {
-            Radius = radius;
+            _radius = radius;
             Center = center;
         }
 
-        public static new Circle FromJson(JsonElement el)
+        public new static Circle FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
@@ -30,8 +30,8 @@ namespace Tracer2D.Shapes
 
         public override bool Intersect(in Point p)
         {
-            var distance = MathF.Sqrt(((p.x - Center.x) * (p.x - Center.x)) + ((p.y - Center.y) * (p.y - Center.y)));
-            return distance <= Radius;
+            var distance = MathF.Sqrt((p.x - Center.x) * (p.x - Center.x) + (p.y - Center.y) * (p.y - Center.y));
+            return distance <= _radius;
         }
     }
 }

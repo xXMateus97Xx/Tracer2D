@@ -18,7 +18,7 @@ namespace Tracer2D.Shapes
             var bottom = new Point(center.x, (int)(center.y + halfHeight));
             var topLeft = new Point(center.x - halfSide, (int)(center.y - halfHeight));
             var topRight = new Point(center.x + halfSide, (int)(center.y - halfHeight));
-            var sideCornerY = (int)(bottom.y - MathF.Sqrt((side * side) - (halfDiagonal * halfDiagonal)));
+            var sideCornerY = (int)(bottom.y - MathF.Sqrt(side * side - halfDiagonal * halfDiagonal));
 
             _a = new Triangle(bottom, topLeft, topRight, color);
 
@@ -31,7 +31,7 @@ namespace Tracer2D.Shapes
                 color);
         }
 
-        public static new ReversePentagon FromJson(JsonElement el)
+        public new static ReversePentagon FromJson(JsonElement el)
         {
             if (el.ValueKind != JsonValueKind.Object)
                 throw new InvalidOperationException("el is not an object");
