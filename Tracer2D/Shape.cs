@@ -22,14 +22,9 @@ namespace Tracer2D
         LeftSemiCircle
     }
 
-    public abstract class Shape
+    public abstract class Shape(in Color color)
     {
-        public readonly Color Color;
-
-        protected Shape(in Color color)
-        {
-            Color = color;
-        }
+        public readonly Color Color = color;
 
         public abstract bool Intersect(in Point p);
 
@@ -50,41 +45,25 @@ namespace Tracer2D
         public static Shape FromJson(JsonElement item)
         {
             var kind = item.GetEnum<ShapeKind>("kind");
-            switch (kind)
+            return kind switch
             {
-                case ShapeKind.Square:
-                    return Square.FromJson(item);
-                case ShapeKind.Circle:
-                    return Circle.FromJson(item);
-                case ShapeKind.Triangle:
-                    return Triangle.FromJson(item);
-                case ShapeKind.Diamond:
-                    return Diamond.FromJson(item);
-                case ShapeKind.Pentagon:
-                    return Pentagon.FromJson(item);
-                case ShapeKind.Hexagon:
-                    return Hexagon.FromJson(item);
-                case ShapeKind.ReversePentagon:
-                    return ReversePentagon.FromJson(item);
-                case ShapeKind.Ellipse:
-                    return Ellipse.FromJson(item);
-                case ShapeKind.Trapeze:
-                    return Trapeze.FromJson(item);
-                case ShapeKind.ReverseTrapeze:
-                    return ReverseTrapeze.FromJson(item);
-                case ShapeKind.Ring:
-                    return Ring.FromJson(item);
-                case ShapeKind.TopSemiCircle:
-                    return TopSemiCircle.FromJson(item);
-                case ShapeKind.RightSemiCircle:
-                    return RightSemiCircle.FromJson(item);
-                case ShapeKind.BottomSemiCircle:
-                    return BottomSemiCircle.FromJson(item);
-                case ShapeKind.LeftSemiCircle:
-                    return LeftSemiCircle.FromJson(item);
-                default:
-                    throw new InvalidOperationException($"Unknown shape kind {kind}");
-            }
+                ShapeKind.Square => Square.FromJson(item),
+                ShapeKind.Circle => Circle.FromJson(item),
+                ShapeKind.Triangle => Triangle.FromJson(item),
+                ShapeKind.Diamond => Diamond.FromJson(item),
+                ShapeKind.Pentagon => Pentagon.FromJson(item),
+                ShapeKind.Hexagon => Hexagon.FromJson(item),
+                ShapeKind.ReversePentagon => ReversePentagon.FromJson(item),
+                ShapeKind.Ellipse => Ellipse.FromJson(item),
+                ShapeKind.Trapeze => Trapeze.FromJson(item),
+                ShapeKind.ReverseTrapeze => ReverseTrapeze.FromJson(item),
+                ShapeKind.Ring => Ring.FromJson(item),
+                ShapeKind.TopSemiCircle => TopSemiCircle.FromJson(item),
+                ShapeKind.RightSemiCircle => RightSemiCircle.FromJson(item),
+                ShapeKind.BottomSemiCircle => BottomSemiCircle.FromJson(item),
+                ShapeKind.LeftSemiCircle => LeftSemiCircle.FromJson(item),
+                _ => throw new InvalidOperationException($"Unknown shape kind {kind}"),
+            };
         }
     }
 }

@@ -1,37 +1,29 @@
 using System.Text.Json;
 
-namespace Tracer2D.Shapes
+namespace Tracer2D.Shapes;
+
+public class Circle(int radius, in Color color, in Point center) : Shape(color)
 {
-    public class Circle : Shape
+    readonly int _radius = radius;
+    protected readonly Point Center = center;
+
+    public new static Circle FromJson(JsonElement el)
     {
-        readonly int _radius;
-        protected readonly Point Center;
+        if (el.ValueKind != JsonValueKind.Object)
+            throw new InvalidOperationException("el is not an object");
 
-        public Circle(int radius, in Color color, in Point center)
-            : base(color)
-        {
-            _radius = radius;
-            Center = center;
-        }
+        var radius = el.GetInt("radius");
+        var centerEl = el.GetObject("center");
+        var center = Point.FromJson(centerEl);
+        var colorEl = el.GetObject("color");
+        var color = Color.FromJson(colorEl);
 
-        public new static Circle FromJson(JsonElement el)
-        {
-            if (el.ValueKind != JsonValueKind.Object)
-                throw new InvalidOperationException("el is not an object");
+        return new Circle(radius, color, center);
+    }
 
-            var radius = el.GetInt("radius");
-            var centerEl = el.GetObject("center");
-            var center = Point.FromJson(centerEl);
-            var colorEl = el.GetObject("color");
-            var color = Color.FromJson(colorEl);
-
-            return new Circle(radius, color, center);
-        }
-
-        public override bool Intersect(in Point p)
-        {
-            var distance = MathF.Sqrt((p.x - Center.x) * (p.x - Center.x) + (p.y - Center.y) * (p.y - Center.y));
-            return distance <= _radius;
-        }
+    public override bool Intersect(in Point p)
+    {
+        var distance = MathF.Sqrt((p.x - Center.x) * (p.x - Center.x) + (p.y - Center.y) * (p.y - Center.y));
+        return distance <= _radius;
     }
 }
