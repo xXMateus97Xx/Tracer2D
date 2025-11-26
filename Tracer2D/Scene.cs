@@ -104,8 +104,6 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
 
         var inc = Vector256.CreateSequence(0f, 1);
 
-        ref readonly var background = ref Background;
-
         for (var y = 0; y < Height; y++)
         {
             var yVec = Vector256.Create((float)y);
