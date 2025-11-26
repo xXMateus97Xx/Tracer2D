@@ -44,5 +44,5 @@ public class Hexagon : Shape
         _s.Intersect(p) || _a.Intersect(p) || _b.Intersect(p);
 
     public override Vector256<int> Intersect(Vector256<float> x, Vector256<float> y)
-        => Vector256.BitwiseOr(Vector256.BitwiseOr(_s.Intersect(x, y), _a.Intersect(x, y)), _b.Intersect(x, y));
+        => _s.Intersect(x, y) | _a.Intersect(x, y) | _b.Intersect(x, y);
 }

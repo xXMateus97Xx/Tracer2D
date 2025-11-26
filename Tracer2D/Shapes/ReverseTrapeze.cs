@@ -51,5 +51,5 @@ public class ReverseTrapeze : Shape
     public override bool Intersect(in Point p) => _square.Intersect(p) || _left.Intersect(p) || _right.Intersect(p);
 
     public override Vector256<int> Intersect(Vector256<float> x, Vector256<float> y)
-        => Vector256.BitwiseOr(Vector256.BitwiseOr(_square.Intersect(x, y), _left.Intersect(x, y)), _right.Intersect(x, y));
+        => _square.Intersect(x, y) | _left.Intersect(x, y) | _right.Intersect(x, y);
 }
