@@ -123,6 +123,12 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
                     if (mask == 0)
                         continue;
 
+                    if (mask == byte.MaxValue)
+                    {
+                        colors.Fill(shape.Color);
+                        continue;
+                    }
+
                     for (var j = Vector256<int>.Count - 1; j >= 0; j--)
                     {
                         if (((mask >> j) & 1) == 1)
