@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.Intrinsics;
+using System.Text.Json;
 using Tracer2D.Shapes;
 
 namespace Tracer2D
@@ -27,6 +28,8 @@ namespace Tracer2D
         public readonly Color Color = color;
 
         public abstract bool Intersect(in Point p);
+
+        public abstract Vector256<int> Intersect(Vector256<float> x, Vector256<float> y);
 
         public static Shape[] ArrayFromJson(JsonElement array)
         {

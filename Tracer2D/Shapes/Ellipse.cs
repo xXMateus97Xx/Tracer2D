@@ -1,3 +1,4 @@
+using System.Runtime.Intrinsics;
 using System.Text.Json;
 
 namespace Tracer2D.Shapes;
@@ -23,4 +24,14 @@ public class Ellipse(in Point radius, in Color color, in Point center) : Shape(c
 
     public override bool Intersect(in Point p) =>
         (p.x - _center.x) * (p.x - _center.x) / _radius.x + (p.y - _center.y) * (p.y - _center.y) / _radius.y <= _radius.x;
+
+    public override Vector256<int> Intersect(Vector256<float> x, Vector256<float> y)
+    {
+        var cx = Vector256.Create(_center.x);
+        var cy = Vector256.Create(_center.y);
+        var rx = Vector256.Create(_radius.x);
+        var ry = Vector256.Create(_radius.y);
+
+        return Vector256.LessThanOrEqual((x - cx) * (x - cx) / rx + (y - cy) * (y - cy) / ry, rx).AsInt32();
+    }
 }

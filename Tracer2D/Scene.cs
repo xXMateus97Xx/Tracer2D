@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using System.Text.Json;
 
 namespace Tracer2D;
@@ -51,6 +52,12 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
     {
         WriteHeader(stream);
 
+        if (Vector256.IsHardwareAccelerated)
+        {
+            RenderFast(stream);
+            return;
+        }
+
         var p = new Point();
         Color finalColor;
         //1023 é multiplo de 3, e RGB tem 3 bytes
@@ -81,6 +88,59 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
                 {
                     stream.Write(buffer);
                     bufPos = 0;
+                }
+            }
+        }
+
+        if (bufPos > 0)
+            stream.Write(buffer[..bufPos]);
+    }
+
+    private void RenderFast(Stream stream)
+    {
+        Span<byte> buffer = stackalloc byte[1024];
+        Span<Color> colors = stackalloc Color[Vector256<int>.Count];
+        var bufPos = 0;
+
+        var inc = Vector256.CreateSequence(0f, 1);
+
+        ref readonly var background = ref Background;
+
+        for (var y = 0; y < Height; y++)
+        {
+            var yVec = Vector256.Create((float)y);
+
+            for (var x = 0; x < Width; x += Vector256<float>.Count)
+            {
+                var xVec = Vector256.Create((float)x) + inc;
+
+                colors.Fill(Background);
+
+                for (var i = Shapes.Length - 1; i >= 0; i--)
+                {
+                    var shape = Shapes[i];
+                    var intersect = shape.Intersect(xVec, yVec);
+                    var mask = Vector256.ExtractMostSignificantBits(intersect);
+
+                    if (mask == 0)
+                        continue;
+
+                    for (var j = Vector256<int>.Count - 1; j >= 0; j--)
+                    {
+                        if (((mask >> j) & 1) == 1)
+                            colors[j] = shape.Color;
+                    }
+                }
+
+                for (var i = 0; i < colors.Length && x + i < Width; i++)
+                {
+                    colors[i].ToSpan(buffer[bufPos..]);
+                    bufPos += 3;
+                    if (buffer.Length - bufPos < 3)
+                    {
+                        stream.Write(buffer[..bufPos]);
+                        bufPos = 0;
+                    }
                 }
             }
         }

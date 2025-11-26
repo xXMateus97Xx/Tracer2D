@@ -1,10 +1,11 @@
+using System.Runtime.Intrinsics;
 using System.Text.Json;
 
 namespace Tracer2D.Shapes;
 
 public class Square : Shape
 {
-    readonly int _topY, _bottomY, _leftX, _rightX;
+    readonly float _topY, _bottomY, _leftX, _rightX;
 
     public Square(int width, int height, in Color color, in Point center)
         : base(color)
@@ -34,4 +35,14 @@ public class Square : Shape
 
     public override bool Intersect(in Point p) =>
         p.x >= _leftX && p.x <= _rightX && p.y >= _topY && p.y <= _bottomY;
+
+    public override Vector256<int> Intersect(Vector256<float> x, Vector256<float> y)
+    {
+        var v1 = Vector256.GreaterThanOrEqual(x, Vector256.Create(_leftX)).AsInt32();
+        var v2 = Vector256.LessThanOrEqual(x, Vector256.Create(_rightX)).AsInt32();
+        var v3 = Vector256.GreaterThanOrEqual(y, Vector256.Create(_topY)).AsInt32();
+        var v4 = Vector256.LessThanOrEqual(y, Vector256.Create(_bottomY)).AsInt32();
+
+        return v1 & v2 & v3 & v4;
+    }
 }

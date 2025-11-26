@@ -1,3 +1,4 @@
+using System.Runtime.Intrinsics;
 using System.Text.Json;
 
 namespace Tracer2D.Shapes;
@@ -46,4 +47,7 @@ public class ReversePentagon : Shape
     }
 
     public override bool Intersect(in Point p) => _a.Intersect(p) || _b.Intersect(p) || _c.Intersect(p);
+
+    public override Vector256<int> Intersect(Vector256<float> x, Vector256<float> y)
+        => Vector256.BitwiseOr(Vector256.BitwiseOr(_a.Intersect(x, y), _b.Intersect(x, y)), _c.Intersect(x, y));
 }

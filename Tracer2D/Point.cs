@@ -2,9 +2,9 @@
 
 namespace Tracer2D;
 
-public struct Point(int x, int y)
+public struct Point(float x, float y)
 {
-    public int x = x, y = y;
+    public float x = x, y = y;
 
     public static Point FromJson(JsonElement element)
     {
