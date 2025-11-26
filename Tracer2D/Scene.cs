@@ -102,7 +102,7 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
         Span<Color> colors = stackalloc Color[Vector256<int>.Count];
         var bufPos = 0;
 
-        var inc = Vector256.CreateSequence(0f, 1);
+        var inc = Vector256<float>.Indices;
 
         for (var y = 0; y < Height; y++)
         {
