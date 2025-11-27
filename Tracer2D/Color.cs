@@ -1,64 +1,72 @@
-﻿using System.Text.Json;
+﻿using System.Numerics;
+using System.Runtime.Intrinsics;
+using System.Text.Json;
 
-namespace Tracer2D
+namespace Tracer2D;
+
+public readonly struct Color
 {
-    public readonly struct Color
+    public readonly byte r, g, b;
+    public readonly float a;
+
+    public Color(byte r, byte g, byte b)
     {
-        public readonly byte r, g, b;
-        public readonly float a;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = 1;
+    }
 
-        public Color(byte r, byte g, byte b)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = 1;
-        }
+    public Color(byte r, byte g, byte b, float a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
 
-        public Color(byte r, byte g, byte b, float a)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
-        }
+    public static Color FromJson(JsonElement el)
+    {
+        if (el.ValueKind != JsonValueKind.Object)
+            throw new ArgumentException("Element is not an object", nameof(el));
 
-        public static Color FromJson(JsonElement el)
-        {
-            if (el.ValueKind != JsonValueKind.Object)
-                throw new ArgumentException("Element is not an object", nameof(el));
+        var a = 1f;
+        if (el.TryGetProperty("a", out _))
+            a = el.GetFloat("a");
 
-            var a = 1f;
-            if (el.TryGetProperty("a", out _))
-                a = el.GetFloat("a");
+        var r = el.GetByte("r");
+        var g = el.GetByte("g");
+        var b = el.GetByte("b");
 
-            var r = el.GetByte("r");
-            var g = el.GetByte("g");
-            var b = el.GetByte("b");
+        var color = new Color(r, g, b, a);
 
-            var color = new Color(r, g, b, a);
+        return color;
+    }
 
-            return color;
-        }
+    public void ToSpan(Span<byte> buffer)
+    {
+        buffer[2] = b;
+        buffer[1] = g;
+        buffer[0] = r;
+    }
 
-        public void ToSpan(Span<byte> buffer)
-        {
-            buffer[2] = b;
-            buffer[1] = g;
-            buffer[0] = r;
-        }
+    public static Color operator +(in Color a, in Color b)
+    {
+        var aVec = new Vector3(a.r, a.g, a.b);
+        var bVec = new Vector3(b.r, b.g, b.b);
 
-        public static Color operator +(in Color a, in Color b)
-        {
-            var alpha = b.a;
+        var alpha = b.a;
 
-            var result = new Color(
-                (byte)((1 - alpha) * a.r + alpha * b.r),
-                (byte)((1 - alpha) * a.g + alpha * b.g),
-                (byte)((1 - alpha) * a.b + alpha * b.b)
-            );
+        var r = (1 - alpha) * aVec + alpha * bVec;
 
-            return result;
-        }
+        var v = Vector128.ConvertToInt32(r.AsVector128());
+
+        var result = new Color(
+            (byte)v[0],
+            (byte)v[1],
+            (byte)v[2]
+        );
+
+        return result;
     }
 }
