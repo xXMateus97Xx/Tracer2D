@@ -59,13 +59,9 @@ public readonly struct Color
 
         var r = (1 - alpha) * aVec + alpha * bVec;
 
-        var v = Vector128.ConvertToInt32(r.AsVector128());
+        var v = Vector128.ConvertToInt32(r.AsVector128()).AsByte();
 
-        var result = new Color(
-            (byte)v[0],
-            (byte)v[1],
-            (byte)v[2]
-        );
+        var result = new Color(v[0], v[4], v[8]);
 
         return result;
     }
