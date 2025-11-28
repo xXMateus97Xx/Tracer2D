@@ -157,17 +157,11 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
     {
         static int Itoa(int val, Span<byte> result)
         {
-            ref var numbers = ref MemoryMarshal.GetReference("0123456789".AsSpan());
-
             Span<byte> tempResult = stackalloc byte[31];
             ref var dstBuf = ref MemoryMarshal.GetReference(tempResult);
-
             int i, j;
             for (i = 30, j = 0; val > 0 && i > 0; i--, val /= 10, j++)
-            {
-                var number = Unsafe.Add(ref numbers, val % 10);
-                Unsafe.Add(ref dstBuf, i) = (byte)number;
-            }
+                Unsafe.Add(ref dstBuf, i) = (byte)((val % 10) + '0');
 
             tempResult.TrimStart((byte)0).CopyTo(result);
 
