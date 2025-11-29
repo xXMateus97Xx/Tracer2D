@@ -64,15 +64,17 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
         Span<byte> buffer = stackalloc byte[1023];
         var bufPos = 0;
 
+        var shapes = Shapes;
+
         for (; p.y < Height; p.y++)
         {
             for (p.x = 0; p.x < Width; p.x++)
             {
                 ref readonly var c = ref Background;
 
-                for (var i = Shapes.Length - 1; i >= 0; i--)
+                for (var i = shapes.Length - 1; i >= 0; i--)
                 {
-                    var shape = Shapes[i];
+                    var shape = shapes[i];
                     if (shape.Intersect(p))
                     {
                         ref readonly var shapeColor = ref shape.Color;
@@ -104,6 +106,8 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
 
         var inc = Vector256<float>.Indices;
 
+        var shapes = Shapes;
+
         for (var y = 0; y < Height; y++)
         {
             var yVec = Vector256.Create((float)y);
@@ -114,9 +118,9 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
 
                 colors.Fill(Background);
 
-                for (var i = Shapes.Length - 1; i >= 0; i--)
+                for (var i = shapes.Length - 1; i >= 0; i--)
                 {
-                    var shape = Shapes[i];
+                    var shape = shapes[i];
                     var intersect = shape.Intersect(xVec, yVec);
                     var mask = Vector256.ExtractMostSignificantBits(intersect);
 
@@ -160,7 +164,7 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
             Span<byte> tempResult = stackalloc byte[31];
             ref var dstBuf = ref MemoryMarshal.GetReference(tempResult);
             int i, j;
-            for (i = 30, j = 0; val > 0 && i > 0; i--, val /= 10, j++)
+            for (i = tempResult.Length - 1, j = 0; val > 0 && i > 0; i--, val /= 10, j++)
                 Unsafe.Add(ref dstBuf, i) = (byte)((val % 10) + '0');
 
             tempResult.TrimStart((byte)0).CopyTo(result);
