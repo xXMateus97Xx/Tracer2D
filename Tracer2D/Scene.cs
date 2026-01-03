@@ -161,7 +161,7 @@ public readonly struct Scene(Color background, Shape[] shapes, int width, int he
     {
         static int Itoa(int val, Span<byte> result)
         {
-            var size = ((int)Math.Floor(Math.Log10(val)));
+            var size = (int)Math.Floor(Math.Log10(val));
 
             ref var dstBuf = ref MemoryMarshal.GetReference(result);
             for (var i = size; val > 0 && i >= 0; i--, val /= 10)
