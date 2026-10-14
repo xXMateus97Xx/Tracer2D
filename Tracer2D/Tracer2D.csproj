@@ -6,7 +6,7 @@
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PublishAot>true</PublishAot>
-		<IlcInstructionSet>native</IlcInstructionSet>
+		<IlcInstructionSet>x86-64-v3</IlcInstructionSet>
 		<LangVersion>14</LangVersion>
 	</PropertyGroup>
 
